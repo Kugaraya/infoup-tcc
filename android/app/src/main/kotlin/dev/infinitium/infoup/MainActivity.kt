@@ -1,4 +1,4 @@
-package com.example.infoup
+package dev.infinitium.infoup
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
