@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:infoup/core/services/auth-service.dart';
 import 'package:infoup/core/viewmodels/public.dart';
 import 'package:infoup/ui/views/main-page.dart';
@@ -56,6 +57,10 @@ class _DashboardScreenState extends State<DashboardScreen>
     setState(() {
       authStatus = AuthStatus.LOGGED_IN;
     });
+    Fluttertoast.showToast(
+        msg: "Welcome Admin",
+        backgroundColor: Colors.black54,
+        textColor: Colors.white);
   }
 
   void logoutCallback() {
@@ -64,6 +69,11 @@ class _DashboardScreenState extends State<DashboardScreen>
       _userId = "";
       _userEmail = "";
     });
+    Fluttertoast.showToast(
+        msg: "Logged out",
+        backgroundColor: Colors.black54,
+        textColor: Colors.white);
+    Navigator.of(context).pop();
   }
 
   Widget loadingScreen() {

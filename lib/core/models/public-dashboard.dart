@@ -51,7 +51,7 @@ class _PublicDashboardState extends State<PublicDashboard> {
                   textAlign: TextAlign.center,
                 ),
                 subtitle: Text(
-                  "Welcome to InfoUp",
+                  "Welcome!",
                   textAlign: TextAlign.center,
                 ),
               ),

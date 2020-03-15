@@ -64,14 +64,31 @@ class _AdminViewModelState extends State<AdminViewModel> {
       ),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_currentIndex == 0 ? "Home" : "About"),
+        title: Text("Admin Mode"),
         actions: <Widget>[
           IconButton(
             icon: Icon(
               Icons.lock_outline,
               color: Colors.white,
             ),
-            onPressed: widget.logoutCallback,
+            onPressed: () => showDialog(
+                barrierDismissible: true,
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text("Logout?"),
+                      actions: <Widget>[
+                        RaisedButton(
+                          onPressed: widget.logoutCallback,
+                          child: Text("Confirm"),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        RaisedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text("Cancel"),
+                          color: Colors.red,
+                        ),
+                      ],
+                    )),
           )
         ],
       ),

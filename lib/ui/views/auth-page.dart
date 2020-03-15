@@ -84,6 +84,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(),
         body: Stack(
           children: <Widget>[
             _showForm(),

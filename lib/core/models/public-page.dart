@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:infoup/core/services/zefyr-image-delegate.dart';
 import 'package:quill_delta/quill_delta.dart';
 import 'package:zefyr/zefyr.dart';
 import 'package:infoup/core/services/auth-service.dart';
@@ -32,11 +37,22 @@ class _PublicPageState extends State<PublicPage> {
     super.initState();
   }
 
-  NotusDocument _loadDocument() {
-    final Delta delta = Delta()
-      ..insert(widget.document["content"] == null
-          ? "No content yet, contact administrator if this is a mistake\n"
-          : widget.document["content"]);
+  _loadDocument() {
+    FirebaseStorage rStorage = FirebaseStorage.instance;
+    StorageReference rRef = rStorage.ref().child(
+        "content/" + widget.document["title"].replaceAll(" ", "_") + ".json");
+    String path = Directory.systemTemp.path +
+        "/" +
+        widget.document["title"].replaceAll(" ", "_") +
+        ".json";
+    File read = File(path);
+    rRef.writeToFile(read);
+
+    if (read.existsSync()) {
+      final contents = read.readAsStringSync();
+      return NotusDocument.fromJson(jsonDecode(contents));
+    }
+    final Delta delta = Delta()..insert("\n");
     return NotusDocument.fromDelta(delta);
   }
 
@@ -49,8 +65,12 @@ class _PublicPageState extends State<PublicPage> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: ZefyrScaffold(
-          child: ZefyrView(
-            document: _loadDocument(),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: ZefyrView(
+              document: _loadDocument(),
+              imageDelegate: CustomImageDelegate(),
+            ),
           ),
         ),
       ),
