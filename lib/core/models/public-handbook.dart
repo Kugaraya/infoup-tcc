@@ -16,12 +16,117 @@ class PublicHandbook extends StatefulWidget {
 }
 
 class _PublicHandbookState extends State<PublicHandbook> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Student Guide"),
         centerTitle: true,
+        actions: <Widget>[
+          StreamBuilder(
+              stream: widget.db.collection("pages").snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                var data = snapshot.data.documents;
+                return data.length != 0
+                    ? IconButton(
+                        icon: Icon(Icons.list, color: Colors.white),
+                        onPressed: () =>
+                            _scaffoldKey.currentState.openEndDrawer(),
+                      )
+                    : Container();
+              }),
+        ],
+      ),
+      endDrawer: SafeArea(
+        child: Material(
+          color: Colors.white,
+          child: Container(
+            width: 200.0,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: double.maxFinite,
+                  height: 40.0,
+                  color: Theme.of(context).primaryColor,
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    "Pages",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      StreamBuilder(
+                          stream: widget.db
+                              .collection("pages")
+                              .orderBy("sequence")
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData ||
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            var data = snapshot.data.documents;
+                            return data.length != 0
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: data.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PublicPage(
+                                                        auth: widget.auth,
+                                                        db: widget.db,
+                                                        document: data[index],
+                                                      )));
+                                        },
+                                        splashColor:
+                                            Theme.of(context).primaryColor,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black45,
+                                                  width: 0.66,
+                                                  style: BorderStyle.solid)),
+                                          child: ListTile(
+                                            leading: Padding(
+                                              padding: EdgeInsets.all(4.0),
+                                              child: Text(
+                                                data[index]["sequence"]
+                                                        .toString() +
+                                                    ".",
+                                                textScaleFactor: 1.2,
+                                              ),
+                                            ),
+                                            title: Text(data[index]["title"]),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container();
+                          }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: Center(
           child: StreamBuilder(
@@ -36,7 +141,11 @@ class _PublicHandbookState extends State<PublicHandbook> {
 
                 return data.length != 0
                     ? CarouselSlider.builder(
-                        scrollPhysics: BouncingScrollPhysics(),
+                        options: CarouselOptions(
+                          scrollPhysics: BouncingScrollPhysics(),
+                          height: MediaQuery.of(context).size.height * 0.80,
+                          enlargeCenterPage: true,
+                        ),
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return Container(
@@ -97,8 +206,6 @@ class _PublicHandbookState extends State<PublicHandbook> {
                             ),
                           );
                         },
-                        height: MediaQuery.of(context).size.height * 0.80,
-                        enlargeCenterPage: true,
                       )
                     : Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),

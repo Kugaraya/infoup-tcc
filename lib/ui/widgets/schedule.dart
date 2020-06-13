@@ -15,9 +15,13 @@ class Schedules {
             child: CircularProgressIndicator(),
           );
         }
+
+        return Center(child: Text('Data'),);
       },
     );
   }
 
-  Widget scheduleFiltered(String _course, String _year, String _search) {}
+  Widget scheduleFiltered(String _course, String _year, String _search) {
+    return Container();
+  }
 }

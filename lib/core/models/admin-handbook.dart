@@ -270,7 +270,11 @@ class _AdminHandbookState extends State<AdminHandbook> {
                 _pageCount = data != null ? data.length : 0;
                 return data.length != 0
                     ? CarouselSlider.builder(
-                        scrollPhysics: BouncingScrollPhysics(),
+                        options: CarouselOptions(
+                          scrollPhysics: BouncingScrollPhysics(),
+                          height: MediaQuery.of(context).size.height * 0.80,
+                          enlargeCenterPage: true,
+                        ),
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return Container(
@@ -335,8 +339,7 @@ class _AdminHandbookState extends State<AdminHandbook> {
                             ),
                           );
                         },
-                        height: MediaQuery.of(context).size.height * 0.80,
-                        enlargeCenterPage: true,
+                        
                       )
                     : Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),

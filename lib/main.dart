@@ -30,7 +30,9 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
       title: 'infoup',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primaryColor: Color(0xff1857a4), accentColor: Color(0xff1f6fd0)),
+        primaryColor: Color(0xff1857a4), 
+        accentColor: Color(0xff1f6fd0)
+      ),
       initialRoute: '/',
       onGenerateRoute: Router.generateRoute,
     );

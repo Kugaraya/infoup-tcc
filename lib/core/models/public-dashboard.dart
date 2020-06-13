@@ -65,6 +65,11 @@ class _PublicDashboardState extends State<PublicDashboard> {
               ),
               Divider(),
               CarouselSlider.builder(
+                options: CarouselOptions(
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  scrollDirection: Axis.vertical,
+                  scrollPhysics: FixedExtentScrollPhysics(),
+                ),
                 itemCount: _content.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -96,9 +101,7 @@ class _PublicDashboardState extends State<PublicDashboard> {
                     ),
                   );
                 },
-                height: MediaQuery.of(context).size.height * 0.45,
-                scrollDirection: Axis.vertical,
-                scrollPhysics: FixedExtentScrollPhysics(),
+                
               )
             ],
           ),

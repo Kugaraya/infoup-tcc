@@ -27,7 +27,7 @@ class SplashView extends StatelessWidget {
           gravity: ToastGravity.BOTTOM,
           fontSize: 12.0,
           textColor: Colors.white,
-          timeInSecForIos: 1,
+          timeInSecForIosWeb: 1,
           toastLength: Toast.LENGTH_SHORT),
     );
   }

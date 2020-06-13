@@ -66,6 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   void logoutCallback() {
     setState(() {
       authStatus = AuthStatus.NOT_LOGGED_IN;
+      widget.auth.signOut();
       _userId = "";
       _userEmail = "";
     });
