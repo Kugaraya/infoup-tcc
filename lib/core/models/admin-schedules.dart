@@ -2,6 +2,7 @@ import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:infoup/core/services/auth-service.dart';
+import 'package:infoup/ui/views/add-schedule.dart';
 
 class AdminSchedule extends StatefulWidget {
   AdminSchedule(
@@ -24,7 +25,6 @@ class AdminSchedule extends StatefulWidget {
 
 class _AdminScheduleState extends State<AdminSchedule> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _isSearch = false;
   String _dropdownYear;
   String _dropdownCourse;
   String _search;
@@ -42,7 +42,15 @@ class _AdminScheduleState extends State<AdminSchedule> {
     return Scaffold(
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AddScheduleView(
+              db: widget.db,
+              userEmail: widget.userEmail,
+              userId: widget.userId,
+            )
+          )
+        ),
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -95,7 +103,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
                         ),
                       ),
                       StreamBuilder(
-                          stream: widget.db.collection("acad-year").snapshots(),
+                          stream: widget.db.collection("acad-year").orderBy('desc', descending: false).snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.data == null ||
                                 snapshot.connectionState ==
@@ -148,10 +156,12 @@ class _AdminScheduleState extends State<AdminSchedule> {
                               child: DropdownButtonFormField(
                                 onChanged: (value) =>
                                     setState(() => _dropdownCourse = value),
+                                value: data[0]["name"],
                                 items: [
                                   for (int i = 0; i < data.length; i++)
                                     DropdownMenuItem(
                                       child: Text(data[i]["name"]),
+                                      value: data[i]["name"],
                                     )
                                 ],
                               ),
@@ -187,42 +197,9 @@ class _AdminScheduleState extends State<AdminSchedule> {
         ),
       ),
       appBar: AppBar(
-        title: !_isSearch
-            ? Text("Exam Schedules")
-            : Container(
-                height: 40.0,
-                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.0)),
-                child: TextField(
-                    onChanged: (text) => _search = text,
-                    autofocus: true,
-                    style: TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      hintText: "ex. Subject Code",
-                      hintStyle: TextStyle(color: Colors.black54),
-                    )),
-              ),
+        title: Text("Schedules"),
         centerTitle: true,
         actions: <Widget>[
-          !_isSearch
-              ? IconButton(
-                  onPressed: () =>
-                      setState(() => _isSearch = _isSearch ? false : true),
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
-                )
-              : IconButton(
-                  onPressed: () =>
-                      setState(() => _isSearch = _isSearch ? false : true),
-                  icon: Icon(
-                    Icons.cancel,
-                    color: Colors.white,
-                  ),
-                ),
           IconButton(
             onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
             icon: Icon(
@@ -232,10 +209,48 @@ class _AdminScheduleState extends State<AdminSchedule> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: <Widget>[],
+      body: Container(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: <Widget>[
+              StreamBuilder(
+                stream: widget.db.collection('course').orderBy('name').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.data == null ||
+                      snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  var data = snapshot.
+                  data.documents;
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {},
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            border: Border.fromBorderSide(BorderSide(
+                              color: Colors.grey,
+                              width: 0.66
+                            ))
+                          ),
+                          child: ListTile(
+                            leading: Icon(Icons.book),
+                            title: Text(data[index]['name']),
+                            trailing: Icon(Icons.chevron_right)
+                          ),
+                        ),
+                      );
+                    }
+                  );
+                }
+              )
+            ],
+          ),
         ),
       ),
     );
