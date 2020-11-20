@@ -3,7 +3,7 @@ import 'package:infoup/ui/views/dashboard.dart';
 import 'package:infoup/ui/views/main-page.dart';
 import 'package:infoup/ui/views/splash.dart';
 
-class Router {
+class Routes {
   static Route<dynamic> generateRoute(settings) {
     switch (settings.name) {
       case '/':

@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         accentColor: Color(0xff1f6fd0)
       ),
       initialRoute: '/',
-      onGenerateRoute: Router.generateRoute,
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }

@@ -72,92 +72,73 @@ class _AdminHandbookState extends State<AdminHandbook> {
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: SafeArea(
-        child: Material(
+        child: Container(
+          width: 200.0,
+          height: MediaQuery.of(context).size.height,
           color: Colors.white,
-          child: Container(
-            width: 200.0,
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: double.maxFinite,
-                  height: 40.0,
-                  color: Theme.of(context).primaryColor,
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    "Pages",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      StreamBuilder(
-                          stream: widget.db
-                              .collection("pages")
-                              .orderBy("sequence")
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData ||
-                                snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            var data = snapshot.data.documents;
-                            _pageCount = data != null ? data.length : 0;
-                            return data.length != 0
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: data.length,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AdminPage(
-                                                        auth: widget.auth,
-                                                        db: widget.db,
-                                                        userEmail:
-                                                            widget.userEmail,
-                                                        userId: widget.userId,
-                                                        logoutCallback: widget
-                                                            .logoutCallback,
-                                                        document: data[index],
-                                                      )));
-                                        },
-                                        splashColor:
-                                            Theme.of(context).primaryColor,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.black45,
-                                                  width: 0.66,
-                                                  style: BorderStyle.solid)),
-                                          child: ListTile(
-                                            leading: Padding(
-                                              padding: EdgeInsets.all(4.0),
-                                              child: Text(
-                                                data[index]["sequence"]
-                                                        .toString() +
-                                                    ".",
-                                                textScaleFactor: 1.2,
-                                              ),
-                                            ),
-                                            title: Text(data[index]["title"]),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container();
-                          }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: StreamBuilder(
+              stream: widget.db
+                  .collection("pages")
+                  .orderBy("sequence")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                var data = snapshot.data.documents;
+                _pageCount = data != null ? data.length : 0;
+                return data.length != 0
+                    ? ListView.builder(
+                      physics: ClampingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                    AdminPage(
+                                      auth: widget.auth,
+                                      db: widget.db,
+                                      userEmail:
+                                          widget.userEmail,
+                                      userId: widget.userId,
+                                      logoutCallback: widget
+                                          .logoutCallback,
+                                      document: data[index],
+                                    )));
+                            },
+                            splashColor:
+                                Theme.of(context).primaryColor,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black45,
+                                      width: 0.66,
+                                      style: BorderStyle.solid)),
+                              child: ListTile(
+                                leading: Padding(
+                                  padding: EdgeInsets.all(4.0),
+                                  child: Text(
+                                    data[index]["sequence"]
+                                            .toString() +
+                                        ".",
+                                    textScaleFactor: 1.1,
+                                  ),
+                                ),
+                                title: Text(data[index]["title"]),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : Container();
+              }),
           ),
         ),
       ),
